@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
 import { IFormInput } from "../../interfaces/Interfaces";
 import { useRecoilState } from "recoil";
-
+import axios from "axios";
 import { listArrayState } from "./../../atoms/atom";
 
 const schema = yup.object().shape({
@@ -24,12 +24,40 @@ const CreateList: FC = () => {
 
   const [listArray, setListArray] = useRecoilState(listArrayState);
 
-  const onSubmit: SubmitHandler<IFormInput> = (data): void => {
+  useEffect(() => {
+    const fectchApi = async () => {
+      try {
+        const res = await axios.get(
+          `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp`
+        );
+        setListArray(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fectchApi();
+  }, []);
+
+  console.log(listArray);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const nanodId = nanoid();
     const newList = {
       listName: data.listName,
-      id: nanoid(),
+      id: nanodId,
     };
     setListArray([...listArray, newList]);
+
+    try {
+      await axios.post(`https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp`, {
+        listName: data.listName,
+        id: nanodId,
+        isCompleted: false,
+        isDeleted: false,
+        tasks: [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
     reset();
   };
