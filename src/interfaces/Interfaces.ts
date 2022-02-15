@@ -1,4 +1,3 @@
 export interface ITask {
-  taskName: string;
-  deadline: number;
+  listName: string;
 }

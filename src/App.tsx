@@ -1,10 +1,15 @@
 import React, { FC } from "react";
-import TodoList from "./components/todoList/TodoList";
+import ListDetail from "./components/createList/todoList/ListDetail";
+import CreateList from "./components/createList/CreateList";
+import { Routes, Route } from "react-router-dom";
 
 const App: FC = () => {
   return (
     <div>
-      <TodoList />
+      <Routes>
+        <Route path="/" element={<CreateList />} />
+        <Route path="/todolist/:id" element={<ListDetail />} />
+      </Routes>
     </div>
   );
 };
