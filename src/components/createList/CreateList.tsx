@@ -1,19 +1,18 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, TextField } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
+import { IFormInput } from "../../interfaces/Interfaces";
+import { useRecoilState } from "recoil";
+
+import { listArrayState } from "./../../atoms/atom";
 
 const schema = yup.object().shape({
   listName: yup.string().required("Please fill the name of the list"),
 });
-
-interface IFormInput {
-  listName: string;
-  id: string;
-}
 
 const CreateList: FC = () => {
   const {
@@ -23,7 +22,7 @@ const CreateList: FC = () => {
     reset,
   } = useForm<IFormInput>({ resolver: yupResolver(schema) });
 
-  const [listArray, setListArray] = useState<IFormInput[]>([]);
+  const [listArray, setListArray] = useRecoilState(listArrayState);
 
   const onSubmit: SubmitHandler<IFormInput> = (data): void => {
     const newList = {
@@ -34,7 +33,14 @@ const CreateList: FC = () => {
 
     reset();
   };
-  console.log(listArray);
+  const handleDeleteTodoList = (listNameToDelete: string): void => {
+    setListArray(
+      listArray.filter((task) => {
+        return task.listName !== listNameToDelete;
+      })
+    );
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -57,9 +63,12 @@ const CreateList: FC = () => {
       <ul>
         {listArray.map((list: IFormInput) => {
           return (
-            <Link to={`/todolist/${list.id}`} key={list.id}>
-              {list.listName}
-            </Link>
+            <li key={list.id}>
+              <Link to={`/todolist/${list.id}`}>{list.listName}</Link>
+              <Button onClick={() => handleDeleteTodoList(list.listName)}>
+                X
+              </Button>
+            </li>
           );
         })}
       </ul>
