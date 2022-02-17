@@ -3,7 +3,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { nanoid } from "nanoid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IList } from "../../interfaces/Interfaces";
 import { useRecoilState } from "recoil";
 import axios from "axios";
@@ -32,7 +32,7 @@ const CreateList: FC = () => {
     formState: { errors },
     reset,
   } = useForm<IList>({ resolver: yupResolver(schema) });
-
+  const navigate = useNavigate();
   const [listArray, setListArray] = useRecoilState(listArrayState);
 
   useEffect(() => {
@@ -48,22 +48,21 @@ const CreateList: FC = () => {
   }, []);
 
   const onSubmit: SubmitHandler<IList> = async (data) => {
-    const postReq = async () => {
-      try {
-        const res = await axios.post<IList>(
-          api,
+    try {
+      const res = await axios.post<IList>(api, {
+        listName: data.listName,
+        listId: nanoid(),
+        tasks: [],
+      });
+      setListArray([...listArray, res.data]);
+      navigate(`/${res.data.id}`);
+    } catch (error) {
+      console.log(error);
+    }
 
-          { listName: data.listName, listId: nanoid(), tasks: [] }
-        );
-        console.log(res.data);
-        setListArray([...listArray, res.data]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    postReq();
     reset();
   };
+
   const handleDeleteTodoList = async (list: IList) => {
     try {
       const res = await axios.delete<IList>(`${api}/${list.id}`);
@@ -88,6 +87,7 @@ const CreateList: FC = () => {
             render={({ field }) => (
               <StyledTextField
                 {...field}
+                autoComplete="off"
                 label="Todo list name"
                 type="text"
                 error={!!errors.listName}

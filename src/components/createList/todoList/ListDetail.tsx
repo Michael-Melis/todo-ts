@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { LocalizationProvider } from "@mui/lab";
-import DateAdapter from "@mui/lab/AdapterDayjs";
-import { taskArrayState } from "../../../atoms/atom";
-import { useRecoilState } from "recoil";
+import { listArrayState, taskArrayState } from "../../../atoms/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { IList, ITask } from "./../../../interfaces/Interfaces";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
@@ -33,16 +31,17 @@ const ListDetail = () => {
   } = useForm<ITask>({ resolver: yupResolver(taskSchema) });
 
   const [tasks, setTasks] = useRecoilState(taskArrayState);
-
+  const listArray = useRecoilValue(listArrayState);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Show All");
   const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
+
+  const activeList = listArray.filter((obj) => obj.id === id)[0];
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const res = await axios.get<IList>(`${api}/${id}`);
-
         const tasksData = res.data.tasks;
 
         setTasks(tasksData);
@@ -81,10 +80,9 @@ const ListDetail = () => {
     setTasks([...tasks, newTask]);
 
     try {
-      const res = await axios.put<ITask[]>(`${api}/${id}`, {
+      await axios.put<ITask[]>(`${api}/${id}`, {
         tasks: [...tasks, newTask],
       });
-      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -96,6 +94,10 @@ const ListDetail = () => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledListDetailContainer>
+          <h1>
+            You are editing:
+            <span> {activeList.listName}</span>
+          </h1>
           <Controller
             name="taskName"
             control={control}
@@ -103,6 +105,7 @@ const ListDetail = () => {
             render={({ field }) => (
               <StyledTextField
                 {...field}
+                autoComplete="off"
                 label="New task"
                 type="text"
                 error={!!errors.taskName}
@@ -117,6 +120,7 @@ const ListDetail = () => {
             render={({ field }) => (
               <StyledTextField
                 {...field}
+                autoComplete="off"
                 label="Additional description of the task"
                 multiline
                 type="text"
@@ -130,6 +134,7 @@ const ListDetail = () => {
             render={({ field }) => (
               <StyledTextField
                 {...field}
+                autoComplete="off"
                 type="datetime-local"
                 error={!!errors.deadline}
                 helperText={errors ? errors.deadline?.message : ""}

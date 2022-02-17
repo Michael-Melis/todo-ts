@@ -4,15 +4,14 @@ export const StyledListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
   h1 {
-    margin: 2rem;
+    margin: 1rem;
   }
 `;
 export const StyledListForm = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+
   margin: 0 auto;
 `;
 export const StyledLists = styled.div`
