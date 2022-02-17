@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { ITask } from "../../../../interfaces/Interfaces";
-import { Button } from "@mui/material";
 import { SetterOrUpdater } from "recoil";
 import {
   StyledBtnContainer,
@@ -12,6 +11,8 @@ import {
   CompleteSubmitBtn,
   DeleteSubmitBtn,
 } from "../../../../styles/GlobalStyles";
+import { api } from "../../../../api/url";
+import { monthNames, days } from "./../../../../models/calendar";
 
 interface Props {
   task: ITask;
@@ -21,7 +22,11 @@ interface Props {
 
 const TaskView = ({ task, tasks, setTasks }: Props) => {
   const index = tasks.findIndex((listItem) => listItem === task);
-  let { slug } = useParams();
+  let { id } = useParams();
+  const deadline = new Date(task.deadline);
+  const showDeadline = `${days[deadline.getDay()]} ${deadline.getDate()} ${
+    monthNames[deadline.getMonth()]
+  } ${deadline.getFullYear()} at ${deadline.getHours()}:${deadline.getMinutes()}`;
 
   const handleDeleteTask = async () => {
     const newList = removeItemAtIndex(tasks, index);
@@ -29,12 +34,9 @@ const TaskView = ({ task, tasks, setTasks }: Props) => {
     setTasks(newList);
     console.log(newList);
     try {
-      await axios.put(
-        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`,
-        {
-          tasks: newList,
-        }
-      );
+      await axios.put(`${api}/${id}`, {
+        tasks: newList,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -48,12 +50,9 @@ const TaskView = ({ task, tasks, setTasks }: Props) => {
     setTasks(newTaskList);
 
     try {
-      await axios.put(
-        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`,
-        {
-          tasks: newTaskList,
-        }
-      );
+      await axios.put(`${api}/${id}`, {
+        tasks: newTaskList,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +68,7 @@ const TaskView = ({ task, tasks, setTasks }: Props) => {
           <span>Additional description:</span> {task.optionalInfo}
         </h2>
         <p>
-          <span>Deadline:</span> {task.deadline}
+          <span>Deadline:</span> {showDeadline}
         </p>
       </StyledTaskContent>
       <StyledBtnContainer>

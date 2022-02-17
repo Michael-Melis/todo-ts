@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, TextareaAutosize } from "@mui/material";
 import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDayjs";
-import { filteredTodoListState, taskArrayState } from "../../../atoms/atom";
-import { useRecoilValue, useRecoilState } from "recoil";
+import { taskArrayState } from "../../../atoms/atom";
+import { useRecoilState } from "recoil";
 import { IList, ITask } from "./../../../interfaces/Interfaces";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
@@ -12,13 +11,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { nanoid } from "nanoid";
 import axios from "axios";
 import TaskView from "./task/TaskView";
-import {
-  StyledListDetailContainer,
-  StyledTextareaAutosize,
-  StyledTextField,
-} from "./ListDetail.styles";
+import { StyledListDetailContainer } from "./ListDetail.styles";
 import TaskFilter from "./filter/TaskFilter";
-import { StyledSubmitBtn } from "../../../styles/GlobalStyles";
+import { StyledSubmitBtn, StyledTextField } from "../../../styles/GlobalStyles";
+
+import { api } from "./../../../api/url";
 
 const taskSchema = yup.object().shape({
   taskName: yup.string().required("Please fill the name of the task"),
@@ -36,14 +33,15 @@ const ListDetail = () => {
   } = useForm<ITask>({ resolver: yupResolver(taskSchema) });
 
   const [tasks, setTasks] = useRecoilState(taskArrayState);
-  const filteredTaskArray = useRecoilValue(filteredTodoListState);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("Show All");
+  const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axios.get<IList>(
-          `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${id}`
-        );
+        const res = await axios.get<IList>(`${api}/${id}`);
 
         const tasksData = res.data.tasks;
 
@@ -54,6 +52,20 @@ const ListDetail = () => {
     };
     fetchTasks();
   }, []);
+
+  useEffect(() => {
+    const filteredTasks = tasks.filter((obj) => {
+      switch (filter) {
+        case "Show Completed":
+          return obj.taskName.includes(searchQuery) && obj.isCompleted;
+        case "Show Uncompleted":
+          return obj.taskName.includes(searchQuery) && !obj.isCompleted;
+        default:
+          return obj.taskName.includes(searchQuery) && obj;
+      }
+    });
+    setFilteredTasks(filteredTasks);
+  }, [searchQuery, filter, tasks]);
 
   const onSubmit: SubmitHandler<ITask> = async (data) => {
     const nanoId = nanoid();
@@ -69,10 +81,9 @@ const ListDetail = () => {
     setTasks([...tasks, newTask]);
 
     try {
-      const res = await axios.put<ITask[]>(
-        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${id}`,
-        { tasks: [...tasks, newTask] }
-      );
+      const res = await axios.put<ITask[]>(`${api}/${id}`, {
+        tasks: [...tasks, newTask],
+      });
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -85,57 +96,67 @@ const ListDetail = () => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledListDetailContainer>
-          <LocalizationProvider dateAdapter={DateAdapter}>
-            <Controller
-              name="taskName"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <StyledTextField
-                  {...field}
-                  label="New task"
-                  type="text"
-                  error={!!errors.taskName}
-                  helperText={errors ? errors.taskName?.message : ""}
-                />
-              )}
-            />
-            <Controller
-              name="optionalInfo"
-              control={control}
-              render={({ field }) => (
-                <StyledTextField
-                  {...field}
-                  label="Additional description of the task"
-                  multiline
-                  type="text"
-                />
-              )}
-            />
-            <Controller
-              name="deadline"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <StyledTextField
-                  {...field}
-                  id="datetime-local"
-                  type="datetime-local"
-                  error={!!errors.deadline}
-                  helperText={errors ? errors.deadline?.message : ""}
-                />
-              )}
-            />
+          <Controller
+            name="taskName"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledTextField
+                {...field}
+                label="New task"
+                type="text"
+                error={!!errors.taskName}
+                helperText={errors ? errors.taskName?.message : ""}
+              />
+            )}
+          />
+          <Controller
+            name="optionalInfo"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledTextField
+                {...field}
+                label="Additional description of the task"
+                multiline
+                type="text"
+              />
+            )}
+          />
+          <Controller
+            name="deadline"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <StyledTextField
+                {...field}
+                type="datetime-local"
+                error={!!errors.deadline}
+                helperText={errors ? errors.deadline?.message : ""}
+              />
+            )}
+          />
 
-            <StyledSubmitBtn type="submit">submit</StyledSubmitBtn>
-          </LocalizationProvider>
-          <TaskFilter />
+          <StyledSubmitBtn type="submit">submit</StyledSubmitBtn>
+
+          <TaskFilter
+            setSearchQuery={setSearchQuery}
+            filter={filter}
+            setFilter={setFilter}
+          />
         </StyledListDetailContainer>
       </form>
 
-      {filteredTaskArray.map((task: ITask) => (
-        <TaskView key={task.id} task={task} tasks={tasks} setTasks={setTasks} />
-      ))}
+      {(filteredTasks.length === 0 ? tasks : filteredTasks).map(
+        (task: ITask) => (
+          <TaskView
+            key={task.id}
+            task={task}
+            tasks={tasks}
+            setTasks={setTasks}
+          />
+        )
+      )}
     </div>
   );
 };

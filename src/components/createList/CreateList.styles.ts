@@ -4,7 +4,7 @@ export const StyledListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 3rem auto;
+
   h1 {
     margin: 2rem;
   }
@@ -18,10 +18,8 @@ export const StyledListForm = styled.div`
 export const StyledLists = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 3rem;
-  width: 80%;
-
-  margin: 1rem auto;
+  width: 50%;
+  margin: 3rem 0;
 `;
 export const StyledLink = styled.div`
   display: flex;
@@ -38,14 +36,13 @@ export const StyledLink = styled.div`
     font-size: 2rem;
     margin: 1rem;
     width: 100%;
-
-    text-align: center;
     padding: 0.5rem 2rem;
-
     transition: all 300ms ease-in-out;
+    text-align: center;
   }
   a:hover {
     color: #049172;
     transform: scale(2);
+    text-shadow: 2px 6px 4px black;
   }
 `;

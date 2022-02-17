@@ -1,28 +1,32 @@
 import { ChangeEvent } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { taskArrayState, todoListFilterState } from "../../../../atoms/atom";
 import { MenuItem } from "@mui/material";
+import { StyledFilterContainer } from "./TaskFilter.styles";
+
 import {
-  StyledFilterContainer,
-  StyledSelect,
   StyledTextField,
-} from "./TaskFilter.styles";
+  StyledSelect,
+} from "./../../../../styles/GlobalStyles";
 
-const TaskFilter = () => {
-  const [filter, setFilter] = useRecoilState(todoListFilterState);
+interface Props {
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+  filter: string;
+}
 
+const TaskFilter = ({ setSearchQuery, setFilter, filter }: Props) => {
   const updateFilter = ({ target: { value } }) => {
     setFilter(value);
   };
-  const [tasks, setTasks] = useRecoilState(taskArrayState);
 
   const searchArray = (e: ChangeEvent<HTMLInputElement>): void => {
     const input = e.target.value;
-    setTasks(tasks.filter((obj) => obj.taskName.includes(input)));
+
+    setSearchQuery(input);
   };
+
   return (
     <StyledFilterContainer>
-      <StyledSelect value={filter} label="age" onChange={updateFilter}>
+      <StyledSelect value={filter} onChange={updateFilter}>
         <MenuItem value="Show All">All</MenuItem>
         <MenuItem value="Show Completed">Completed</MenuItem>
         <MenuItem value="Show Uncompleted">Uncompleted</MenuItem>

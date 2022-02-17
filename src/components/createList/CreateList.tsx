@@ -2,7 +2,6 @@ import { FC, useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, TextField } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
 import { IList } from "../../interfaces/Interfaces";
@@ -15,7 +14,12 @@ import {
   StyledLists,
   StyledLink,
 } from "./CreateList.styles";
-import { DeleteSubmitBtn, StyledSubmitBtn } from "../../styles/GlobalStyles";
+import {
+  DeleteSubmitBtn,
+  StyledSubmitBtn,
+  StyledTextField,
+} from "../../styles/GlobalStyles";
+import { api } from "../../api/url";
 
 const schema = yup.object().shape({
   listName: yup.string().required("Please fill the name of the list"),
@@ -34,9 +38,7 @@ const CreateList: FC = () => {
   useEffect(() => {
     const fectchApi = async () => {
       try {
-        const res = await axios.get<IList[]>(
-          `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp`
-        );
+        const res = await axios.get<IList[]>(api);
         setListArray(res.data);
       } catch (error) {
         console.log(error);
@@ -46,19 +48,12 @@ const CreateList: FC = () => {
   }, []);
 
   const onSubmit: SubmitHandler<IList> = async (data) => {
-    const listId = nanoid();
-    const newList = {
-      listName: data.listName,
-      listId: listId,
-      tasks: [],
-    };
-
     const postReq = async () => {
       try {
         const res = await axios.post<IList>(
-          `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/`,
+          api,
 
-          { listName: data.listName, listId: listId, tasks: [] }
+          { listName: data.listName, listId: nanoid(), tasks: [] }
         );
         console.log(res.data);
         setListArray([...listArray, res.data]);
@@ -71,9 +66,7 @@ const CreateList: FC = () => {
   };
   const handleDeleteTodoList = async (list: IList) => {
     try {
-      const res = await axios.delete<IList>(
-        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${list.id}`
-      );
+      const res = await axios.delete<IList>(`${api}/${list.id}`);
       const newArray = listArray.filter((task) => {
         return task.listId !== res.data.listId;
       });
@@ -93,7 +86,7 @@ const CreateList: FC = () => {
             control={control}
             defaultValue=""
             render={({ field }) => (
-              <TextField
+              <StyledTextField
                 {...field}
                 label="Todo list name"
                 type="text"

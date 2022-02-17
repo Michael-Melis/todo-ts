@@ -1,7 +1,6 @@
 import styled from "styled-components";
 export const StyledTask = styled.div`
   display: flex;
-
   padding: 1rem;
   margin: 1rem 5rem;
   justify-content: space-between;
@@ -35,7 +34,11 @@ export const StyledTaskContent = styled.div`
   }
   h2 {
     ${({ task }) => {
-      if (task?.optionalInfo === undefined) {
+      if (task?.optionalInfo) {
+        return `
+        visibility: visible;
+        `;
+      } else {
         return `
         visibility: hidden;
         `;
@@ -47,4 +50,5 @@ export const StyledTaskContent = styled.div`
 export const StyledBtnContainer = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 `;

@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
-import { Button } from "@mui/material";
+import { Button, Select, TextField } from "@mui/material";
 
 const GlobalStyle = createGlobalStyle`
 *{
@@ -9,7 +9,7 @@ const GlobalStyle = createGlobalStyle`
 }
 
 body{
-    background: grey;
+   background: #E8E8E8;
     font-family: monospace;
     
 }
@@ -50,5 +50,23 @@ export const CompleteSubmitBtn = styled(Button)`
   &:hover {
     background: #fff;
     color: #008000;
+  }
+`;
+
+export const StyledTextField = styled(TextField)`
+  margin: 0.5rem 0;
+  & .MuiOutlinedInput-notchedOutline {
+    border-color: #252525;
+  }
+  & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #049172;
+  }
+`;
+export const StyledSelect = styled(Select)`
+  & .MuiOutlinedInput-notchedOutline {
+    border-color: #252525;
+  }
+  & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #049172;
   }
 `;
