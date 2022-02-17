@@ -103,7 +103,6 @@ const ListDetail = () => {
             <Controller
               name="optionalInfo"
               control={control}
-              defaultValue=""
               render={({ field }) => (
                 <TextareaAutosize {...field} minRows={4} />
               )}
@@ -143,8 +142,7 @@ const ListDetail = () => {
 const StyledListDetailContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 50%;
-  margin: 0 auto;
+  align-items: center;
 `;
 const StyledTextField = styled(TextField)`
   margin: 1rem 0;

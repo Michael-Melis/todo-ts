@@ -144,9 +144,16 @@ const StyledLink = styled.div`
   a {
     color: #fff;
     text-decoration: none;
+    font-size: 2rem;
+    margin: 1rem;
+    width: 100%;
+    border: 1px solid white;
+    text-align: center;
+    padding: 0.5rem 2rem;
+    border-radius: 6px;
   }
   a:hover {
-    color: red;
+    color: #79c366;
   }
 `;
 

@@ -56,14 +56,15 @@ const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
         <h1
           style={
             task.isCompleted
-              ? { textDecoration: "line-through" }
-              : { textDecoration: "none" }
+              ? { textDecoration: "line-through", background: "red" }
+              : { textDecoration: "underline", background: "green" }
           }
         >
           Task: {task.taskName}
         </h1>
+
+        <h2>Content: {task.optionalInfo}</h2>
         <p>Deadline: {task.deadline}</p>
-        <p>Content: {task.optionalInfo}</p>
       </StyledTaskContent>
       <div>
         <Button onClick={handleDeleteTask}>X</Button>
@@ -76,7 +77,7 @@ const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
 const StyledTask = styled.div`
   display: flex;
   border: 3px solid black;
-  margin: 1rem 0;
+  margin: 1rem 5rem;
   justify-content: space-between;
   align-items: center;
 `;
@@ -85,7 +86,7 @@ const StyledTaskContent = styled.div`
   flex-direction: column;
   width: 100%;
   h1 {
-    background: grey;
+    text-decoration: underline;
   }
   p {
     background: #c5c1c1;
