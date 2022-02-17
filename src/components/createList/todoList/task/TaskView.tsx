@@ -1,10 +1,9 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { ITask } from "../../../../interfaces/Interfaces";
 import { Button } from "@mui/material";
 import { SetterOrUpdater } from "recoil";
 import styled from "styled-components";
+import axios from "axios";
 
 interface Props {
   task: ITask;
@@ -16,10 +15,21 @@ const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
   const index = tasksArray.findIndex((listItem) => listItem === task);
   let { slug } = useParams();
 
-  const handleDeleteTask = (): void => {
+  const handleDeleteTask = async () => {
     const newList = removeItemAtIndex(tasksArray, index);
 
     setTasksArray(newList);
+    console.log(newList);
+    try {
+      await axios.put(
+        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`,
+        {
+          tasks: newList,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCompleteTask = async () => {
@@ -28,6 +38,17 @@ const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
       isCompleted: !task.isCompleted,
     });
     setTasksArray(newTaskList);
+
+    try {
+      await axios.put(
+        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`,
+        {
+          tasks: newTaskList,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <StyledTask>

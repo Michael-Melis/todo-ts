@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { TextField, Button, TextareaAutosize } from "@mui/material";
-import { DateTimePicker, LocalizationProvider } from "@mui/lab";
+import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDayjs";
 import { listArrayState, taskArrayState } from "../../../atoms/atom";
 import { useRecoilValue, useRecoilState } from "recoil";
@@ -75,7 +75,7 @@ const ListDetail = () => {
 
     reset();
   };
-  console.log(listArray);
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>

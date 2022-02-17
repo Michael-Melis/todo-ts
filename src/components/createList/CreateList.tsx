@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, TextField } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
-import { IFormInput, ITask } from "../../interfaces/Interfaces";
+import { IFormInput } from "../../interfaces/Interfaces";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import { listArrayState } from "./../../atoms/atom";
