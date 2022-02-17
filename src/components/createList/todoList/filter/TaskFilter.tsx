@@ -14,11 +14,11 @@ const TaskFilter = () => {
   const updateFilter = ({ target: { value } }) => {
     setFilter(value);
   };
-  const [tasksArray, setTasksArray] = useRecoilState(taskArrayState);
+  const [tasks, setTasks] = useRecoilState(taskArrayState);
 
   const searchArray = (e: ChangeEvent<HTMLInputElement>): void => {
     const input = e.target.value;
-    setTasksArray(tasksArray.filter((obj) => obj.taskName.includes(input)));
+    setTasks(tasks.filter((obj) => obj.taskName.includes(input)));
   };
   return (
     <StyledFilterContainer>

@@ -35,7 +35,7 @@ const ListDetail = () => {
     reset,
   } = useForm<ITask>({ resolver: yupResolver(taskSchema) });
 
-  const [tasksArray, setTasksArray] = useRecoilState(taskArrayState);
+  const [tasks, setTasks] = useRecoilState(taskArrayState);
   const filteredTaskArray = useRecoilValue(filteredTodoListState);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const ListDetail = () => {
 
         const tasksData = res.data.tasks;
 
-        setTasksArray(tasksData);
+        setTasks(tasksData);
       } catch (error) {
         console.log(error);
       }
@@ -66,12 +66,12 @@ const ListDetail = () => {
       isDeleted: false,
       listNameId: id,
     };
-    setTasksArray([...tasksArray, newTask]);
+    setTasks([...tasks, newTask]);
 
     try {
       const res = await axios.put<ITask[]>(
         `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${id}`,
-        { tasks: [...tasksArray, newTask] }
+        { tasks: [...tasks, newTask] }
       );
       console.log(res);
     } catch (error) {
@@ -134,12 +134,7 @@ const ListDetail = () => {
       </form>
 
       {filteredTaskArray.map((task: ITask) => (
-        <TaskView
-          key={task.id}
-          task={task}
-          tasksArray={tasksArray}
-          setTasksArray={setTasksArray}
-        />
+        <TaskView key={task.id} task={task} tasks={tasks} setTasks={setTasks} />
       ))}
     </div>
   );

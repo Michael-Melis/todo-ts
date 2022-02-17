@@ -15,18 +15,18 @@ import {
 
 interface Props {
   task: ITask;
-  tasksArray: ITask[];
-  setTasksArray: SetterOrUpdater<ITask[]>;
+  tasks: ITask[];
+  setTasks: SetterOrUpdater<ITask[]>;
 }
 
-const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
-  const index = tasksArray.findIndex((listItem) => listItem === task);
+const TaskView = ({ task, tasks, setTasks }: Props) => {
+  const index = tasks.findIndex((listItem) => listItem === task);
   let { slug } = useParams();
 
   const handleDeleteTask = async () => {
-    const newList = removeItemAtIndex(tasksArray, index);
+    const newList = removeItemAtIndex(tasks, index);
 
-    setTasksArray(newList);
+    setTasks(newList);
     console.log(newList);
     try {
       await axios.put(
@@ -41,11 +41,11 @@ const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
   };
 
   const handleCompleteTask = async () => {
-    const newTaskList = replaceItemAtIndex(tasksArray, index, {
+    const newTaskList = replaceItemAtIndex(tasks, index, {
       ...task,
       isCompleted: !task.isCompleted,
     });
-    setTasksArray(newTaskList);
+    setTasks(newTaskList);
 
     try {
       await axios.put(
