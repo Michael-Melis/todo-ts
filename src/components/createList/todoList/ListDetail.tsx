@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import { TextField, Button, TextareaAutosize } from "@mui/material";
 import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDayjs";
-import { listArrayState, taskArrayState } from "../../../atoms/atom";
+import {
+  filteredTodoListState,
+  listArrayState,
+  taskArrayState,
+} from "../../../atoms/atom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { ITask } from "./../../../interfaces/Interfaces";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -13,6 +17,7 @@ import { nanoid } from "nanoid";
 import axios from "axios";
 import TaskView from "./task/TaskView";
 import styled from "styled-components";
+import TaskFilter from "./filter/TaskFilter";
 
 const taskSchema = yup.object().shape({
   taskName: yup.string().required("Please fill the name of the task"),
@@ -30,7 +35,7 @@ const ListDetail = () => {
   } = useForm<ITask>({ resolver: yupResolver(taskSchema) });
 
   const [tasksArray, setTasksArray] = useRecoilState(taskArrayState);
-  const listArray = useRecoilValue(listArrayState);
+  const filteredTaskArray = useRecoilValue(filteredTodoListState);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -65,7 +70,7 @@ const ListDetail = () => {
     setTasksArray([...tasksArray, newTask]);
 
     try {
-      const res = await axios.put(
+      await axios.put(
         `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`,
         { tasks: [...tasksArray, newTask] }
       );
@@ -122,7 +127,8 @@ const ListDetail = () => {
           </LocalizationProvider>
         </StyledListDetailContainer>
       </form>
-      {tasksArray.map((task: ITask) => (
+      <TaskFilter />
+      {filteredTaskArray.map((task: ITask) => (
         <TaskView
           key={task.id}
           task={task}
