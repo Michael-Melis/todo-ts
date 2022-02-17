@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, TextField } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
-import { IFormInput } from "../../interfaces/Interfaces";
+import { IList } from "../../interfaces/Interfaces";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import { listArrayState } from "./../../atoms/atom";
@@ -27,14 +27,14 @@ const CreateList: FC = () => {
     control,
     formState: { errors },
     reset,
-  } = useForm<IFormInput>({ resolver: yupResolver(schema) });
+  } = useForm<IList>({ resolver: yupResolver(schema) });
 
   const [listArray, setListArray] = useRecoilState(listArrayState);
 
   useEffect(() => {
     const fectchApi = async () => {
       try {
-        const res = await axios.get(
+        const res = await axios.get<IList[]>(
           `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp`
         );
         setListArray(res.data);
@@ -45,7 +45,7 @@ const CreateList: FC = () => {
     fectchApi();
   }, []);
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const onSubmit: SubmitHandler<IList> = async (data) => {
     const listId = nanoid();
     const newList = {
       listName: data.listName,
@@ -55,33 +55,32 @@ const CreateList: FC = () => {
 
     const postReq = async () => {
       try {
-        await axios.post(
+        const res = await axios.post<IList>(
           `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/`,
 
           { listName: data.listName, listId: listId, tasks: [] }
         );
+        console.log(res.data);
+        setListArray([...listArray, res.data]);
       } catch (error) {
         console.log(error);
       }
     };
     postReq();
-    setListArray([...listArray, newList]);
     reset();
   };
-  const handleDeleteTodoList = async (list: IFormInput) => {
-    const newArray = listArray.filter((task) => {
-      return task.listId !== list.listId;
-    });
-
+  const handleDeleteTodoList = async (list: IList) => {
     try {
-      await axios.delete(
+      const res = await axios.delete<IList>(
         `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${list.id}`
       );
+      const newArray = listArray.filter((task) => {
+        return task.listId !== res.data.listId;
+      });
+      setListArray(newArray);
     } catch (error) {
       console.log(error);
     }
-
-    setListArray(newArray);
   };
 
   return (
@@ -108,17 +107,19 @@ const CreateList: FC = () => {
       </form>
 
       <StyledLists>
-        {listArray.map((list: IFormInput, index: number) => {
-          return (
-            <StyledLink key={index}>
-              <Link to={`/${list.id}`}>{list.listName}</Link>
+        {listArray
+          ? listArray.map((list: IList, index: number) => {
+              return (
+                <StyledLink key={index}>
+                  <Link to={`/${list.id}`}>{list.listName}</Link>
 
-              <DeleteSubmitBtn onClick={() => handleDeleteTodoList(list)}>
-                X
-              </DeleteSubmitBtn>
-            </StyledLink>
-          );
-        })}
+                  <DeleteSubmitBtn onClick={() => handleDeleteTodoList(list)}>
+                    X
+                  </DeleteSubmitBtn>
+                </StyledLink>
+              );
+            })
+          : "loading..."}
       </StyledLists>
     </StyledListContainer>
   );

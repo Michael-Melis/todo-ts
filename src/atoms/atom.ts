@@ -1,9 +1,9 @@
 import { atom, selector } from "recoil";
-import { IFormInput, ITask } from "../interfaces/Interfaces";
+import { IList, ITask } from "../interfaces/Interfaces";
 
 export const listArrayState = atom({
   key: "listArrayState",
-  default: [] as IFormInput[],
+  default: [] as IList[],
 });
 export const taskArrayState = atom({
   key: "taskArrayState",

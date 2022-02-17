@@ -5,7 +5,7 @@ import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDayjs";
 import { filteredTodoListState, taskArrayState } from "../../../atoms/atom";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { ITask } from "./../../../interfaces/Interfaces";
+import { IList, ITask } from "./../../../interfaces/Interfaces";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -27,7 +27,7 @@ const taskSchema = yup.object().shape({
 });
 
 const ListDetail = () => {
-  let { slug } = useParams();
+  let { id } = useParams();
   const {
     handleSubmit,
     control,
@@ -41,13 +41,11 @@ const ListDetail = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axios.get(
-          `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`
+        const res = await axios.get<IList>(
+          `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${id}`
         );
 
-        const tasksData = res.data.tasks.map((data) => {
-          return data;
-        });
+        const tasksData = res.data.tasks;
 
         setTasksArray(tasksData);
       } catch (error) {
@@ -66,15 +64,16 @@ const ListDetail = () => {
       id: nanoId,
       isCompleted: false,
       isDeleted: false,
-      listNameId: slug,
+      listNameId: id,
     };
     setTasksArray([...tasksArray, newTask]);
 
     try {
-      await axios.put(
-        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${slug}`,
+      const res = await axios.put<ITask[]>(
+        `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/${id}`,
         { tasks: [...tasksArray, newTask] }
       );
+      console.log(res);
     } catch (error) {
       console.log(error);
     }

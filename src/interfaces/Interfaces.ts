@@ -1,4 +1,4 @@
-export interface IFormInput {
+export interface IList {
   listName: string;
   id?: number;
   tasks: any[];

@@ -33,9 +33,14 @@ export const StyledTaskContent = styled.div`
   span {
     color: #fff;
   }
-  h1 {
-  }
-  p {
+  h2 {
+    ${({ task }) => {
+      if (task?.optionalInfo === undefined) {
+        return `
+        visibility: hidden;
+        `;
+      }
+    }}
   }
 `;
 
