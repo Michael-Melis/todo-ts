@@ -1,6 +1,7 @@
-import React from "react";
+import styled from "@emotion/styled";
 import { useRecoilState } from "recoil";
 import { todoListFilterState } from "../../../../atoms/atom";
+import { Select, MenuItem } from "@mui/material";
 
 const TaskFilter = () => {
   const [filter, setFilter] = useRecoilState(todoListFilterState);
@@ -9,14 +10,21 @@ const TaskFilter = () => {
   };
   return (
     <>
-      Filter:
-      <select value={filter} onChange={updateFilter}>
-        <option value="Show All">All</option>
-        <option value="Show Completed">Completed</option>
-        <option value="Show Uncompleted">Uncompleted</option>
-      </select>
+      <StyledSelect
+        value={filter}
+        label="Filter option"
+        onChange={updateFilter}
+      >
+        <MenuItem value="Show All">All</MenuItem>
+        <MenuItem value="Show Completed">Completed</MenuItem>
+        <MenuItem value="Show Uncompleted">Uncompleted</MenuItem>
+      </StyledSelect>
     </>
   );
 };
+
+const StyledSelect = styled(Select)`
+  background: grey;
+`;
 
 export default TaskFilter;
