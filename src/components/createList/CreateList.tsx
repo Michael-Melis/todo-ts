@@ -9,7 +9,13 @@ import { IFormInput } from "../../interfaces/Interfaces";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import { listArrayState } from "./../../atoms/atom";
-import styled from "styled-components";
+import {
+  StyledListContainer,
+  StyledListForm,
+  StyledLists,
+  StyledLink,
+} from "./CreateList.styles";
+import { DeleteSubmitBtn, StyledSubmitBtn } from "../../styles/GlobalStyles";
 
 const schema = yup.object().shape({
   listName: yup.string().required("Please fill the name of the list"),
@@ -47,8 +53,7 @@ const CreateList: FC = () => {
       tasks: [],
     };
 
-    setListArray([...listArray, newList]);
-    const fectchApi = async () => {
+    const postReq = async () => {
       try {
         await axios.post(
           `https://620bd0cce8751b8b5facfda6.mockapi.io/todoapp/`,
@@ -59,8 +64,8 @@ const CreateList: FC = () => {
         console.log(error);
       }
     };
-    fectchApi();
-
+    postReq();
+    setListArray([...listArray, newList]);
     reset();
   };
   const handleDeleteTodoList = async (list: IFormInput) => {
@@ -81,6 +86,7 @@ const CreateList: FC = () => {
 
   return (
     <StyledListContainer>
+      <h1>Create new todo list</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledListForm>
           <Controller
@@ -97,16 +103,19 @@ const CreateList: FC = () => {
               />
             )}
           />
-          <Button type="submit">Submit</Button>
+          <StyledSubmitBtn type="submit">Submit</StyledSubmitBtn>
         </StyledListForm>
       </form>
+
       <StyledLists>
         {listArray.map((list: IFormInput, index: number) => {
           return (
             <StyledLink key={index}>
               <Link to={`/${list.id}`}>{list.listName}</Link>
 
-              <Button onClick={() => handleDeleteTodoList(list)}>delete</Button>
+              <DeleteSubmitBtn onClick={() => handleDeleteTodoList(list)}>
+                X
+              </DeleteSubmitBtn>
             </StyledLink>
           );
         })}
@@ -114,47 +123,5 @@ const CreateList: FC = () => {
     </StyledListContainer>
   );
 };
-
-const StyledListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const StyledListForm = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-  margin: 0 auto;
-`;
-const StyledLists = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #252525;
-  padding: 3rem;
-  width: 50%;
-  margin: 0 auto;
-`;
-const StyledLink = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  background: #252525;
-  width: 50%;
-  margin: 0 auto;
-  a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 2rem;
-    margin: 1rem;
-    width: 100%;
-    border: 1px solid white;
-    text-align: center;
-    padding: 0.5rem 2rem;
-    border-radius: 6px;
-  }
-  a:hover {
-    color: #79c366;
-  }
-`;
 
 export default CreateList;

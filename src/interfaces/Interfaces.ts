@@ -6,7 +6,7 @@ export interface IFormInput {
 }
 export interface ITask {
   taskName: string;
-  deadline: number;
+  deadline: string;
   id: string;
   isCompleted: boolean;
   isDeleted: boolean;

@@ -2,8 +2,16 @@ import { useParams } from "react-router-dom";
 import { ITask } from "../../../../interfaces/Interfaces";
 import { Button } from "@mui/material";
 import { SetterOrUpdater } from "recoil";
-import styled from "styled-components";
+import {
+  StyledBtnContainer,
+  StyledTask,
+  StyledTaskContent,
+} from "./Task.styles";
 import axios from "axios";
+import {
+  CompleteSubmitBtn,
+  DeleteSubmitBtn,
+} from "../../../../styles/GlobalStyles";
 
 interface Props {
   task: ITask;
@@ -52,46 +60,25 @@ const TaskView = ({ task, tasksArray, setTasksArray }: Props) => {
   };
   return (
     <StyledTask>
-      <StyledTaskContent>
-        <h1
-          style={
-            task.isCompleted
-              ? { textDecoration: "line-through", background: "red" }
-              : { textDecoration: "underline", background: "green" }
-          }
-        >
-          Task: {task.taskName}
+      <StyledTaskContent task={task}>
+        <h1>
+          <span> Task:</span> {task.taskName}
         </h1>
 
-        <h2>Content: {task.optionalInfo}</h2>
-        <p>Deadline: {task.deadline}</p>
+        <h2>
+          <span>Additional description:</span> {task.optionalInfo}
+        </h2>
+        <p>
+          <span>Deadline:</span> {task.deadline}
+        </p>
       </StyledTaskContent>
-      <div>
-        <Button onClick={handleDeleteTask}>X</Button>
-        <Button onClick={handleCompleteTask}>Complete</Button>
-      </div>
+      <StyledBtnContainer>
+        <DeleteSubmitBtn onClick={handleDeleteTask}>X</DeleteSubmitBtn>
+        <CompleteSubmitBtn onClick={handleCompleteTask}>✓</CompleteSubmitBtn>
+      </StyledBtnContainer>
     </StyledTask>
   );
 };
-
-const StyledTask = styled.div`
-  display: flex;
-  border: 3px solid black;
-  margin: 1rem 5rem;
-  justify-content: space-between;
-  align-items: center;
-`;
-const StyledTaskContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  h1 {
-    text-decoration: underline;
-  }
-  p {
-    background: #c5c1c1;
-  }
-`;
 
 export default TaskView;
 

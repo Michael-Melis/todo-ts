@@ -1,13 +1,9 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { TextField, Button, TextareaAutosize } from "@mui/material";
+import { Button, TextareaAutosize } from "@mui/material";
 import { LocalizationProvider } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterDayjs";
-import {
-  filteredTodoListState,
-  listArrayState,
-  taskArrayState,
-} from "../../../atoms/atom";
+import { filteredTodoListState, taskArrayState } from "../../../atoms/atom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { ITask } from "./../../../interfaces/Interfaces";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -16,12 +12,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { nanoid } from "nanoid";
 import axios from "axios";
 import TaskView from "./task/TaskView";
-import styled from "styled-components";
+import {
+  StyledListDetailContainer,
+  StyledTextareaAutosize,
+  StyledTextField,
+} from "./ListDetail.styles";
 import TaskFilter from "./filter/TaskFilter";
+import { StyledSubmitBtn } from "../../../styles/GlobalStyles";
 
 const taskSchema = yup.object().shape({
   taskName: yup.string().required("Please fill the name of the task"),
-  deadline: yup.number().required("Please fill the deadline"),
+  deadline: yup.string().required("Please fill thedeadline"),
   optionalInfo: yup.string(),
 });
 
@@ -104,29 +105,35 @@ const ListDetail = () => {
               name="optionalInfo"
               control={control}
               render={({ field }) => (
-                <TextareaAutosize {...field} minRows={4} />
+                <StyledTextField
+                  {...field}
+                  label="Additional description of the task"
+                  multiline
+                  type="text"
+                />
               )}
             />
             <Controller
               name="deadline"
               control={control}
-              defaultValue={0}
+              defaultValue=""
               render={({ field }) => (
                 <StyledTextField
                   {...field}
-                  label="Deadline in days"
-                  type="number"
+                  id="datetime-local"
+                  type="datetime-local"
                   error={!!errors.deadline}
                   helperText={errors ? errors.deadline?.message : ""}
                 />
               )}
             />
 
-            <Button type="submit">submit</Button>
+            <StyledSubmitBtn type="submit">submit</StyledSubmitBtn>
           </LocalizationProvider>
+          <TaskFilter />
         </StyledListDetailContainer>
       </form>
-      <TaskFilter />
+
       {filteredTaskArray.map((task: ITask) => (
         <TaskView
           key={task.id}
@@ -138,14 +145,5 @@ const ListDetail = () => {
     </div>
   );
 };
-
-const StyledListDetailContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-const StyledTextField = styled(TextField)`
-  margin: 1rem 0;
-`;
 
 export default ListDetail;
