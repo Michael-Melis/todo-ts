@@ -22,7 +22,9 @@ interface Props {
 
 const TaskView = ({ task, tasks, setTasks }: Props) => {
   const index = tasks.findIndex((listItem) => listItem === task);
+
   let { id } = useParams();
+
   const deadline = new Date(task.deadline);
   const showDeadline = `${days[deadline.getDay()]} ${deadline.getDate()} ${
     monthNames[deadline.getMonth()]
@@ -30,9 +32,7 @@ const TaskView = ({ task, tasks, setTasks }: Props) => {
 
   const handleDeleteTask = async () => {
     const newList = removeItemAtIndex(tasks, index);
-
     setTasks(newList);
-    console.log(newList);
     try {
       await axios.put(`${api}/${id}`, {
         tasks: newList,
