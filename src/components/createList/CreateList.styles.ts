@@ -6,7 +6,7 @@ export const StyledListContainer = styled.div`
   align-items: center;
 
   h1 {
-    margin: 2rem;
+    margin: 1rem;
   }
 `;
 export const StyledListForm = styled.div`

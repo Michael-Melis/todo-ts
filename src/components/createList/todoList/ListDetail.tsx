@@ -33,7 +33,7 @@ const ListDetail = () => {
   } = useForm<ITask>({ resolver: yupResolver(taskSchema) });
 
   const [tasks, setTasks] = useRecoilState(taskArrayState);
-
+  const [listName, setListName] = useState<IList>();
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Show All");
   const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
@@ -44,7 +44,7 @@ const ListDetail = () => {
         const res = await axios.get<IList>(`${api}/${id}`);
 
         const tasksData = res.data.tasks;
-
+        setListName(res.data);
         setTasks(tasksData);
       } catch (error) {
         console.log(error);
@@ -96,6 +96,13 @@ const ListDetail = () => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledListDetailContainer>
+          {listName ? (
+            <h1>
+              You are editing: <span> {listName.listName}</span>
+            </h1>
+          ) : (
+            "loading..."
+          )}
           <Controller
             name="taskName"
             control={control}
@@ -105,6 +112,7 @@ const ListDetail = () => {
                 {...field}
                 label="New task"
                 type="text"
+                autoComplete="off"
                 error={!!errors.taskName}
                 helperText={errors ? errors.taskName?.message : ""}
               />
@@ -117,6 +125,7 @@ const ListDetail = () => {
             render={({ field }) => (
               <StyledTextField
                 {...field}
+                autoComplete="off"
                 label="Additional description of the task"
                 multiline
                 type="text"

@@ -3,7 +3,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { nanoid } from "nanoid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IList } from "../../interfaces/Interfaces";
 import { useRecoilState } from "recoil";
 import axios from "axios";
@@ -32,7 +32,7 @@ const CreateList: FC = () => {
     formState: { errors },
     reset,
   } = useForm<IList>({ resolver: yupResolver(schema) });
-
+  const navigate = useNavigate();
   const [listArray, setListArray] = useRecoilState(listArrayState);
 
   useEffect(() => {
@@ -57,6 +57,7 @@ const CreateList: FC = () => {
         );
         console.log(res.data);
         setListArray([...listArray, res.data]);
+        navigate(`/${res.data.id}`);
       } catch (error) {
         console.log(error);
       }
@@ -88,6 +89,7 @@ const CreateList: FC = () => {
             render={({ field }) => (
               <StyledTextField
                 {...field}
+                autoComplete="off"
                 label="Todo list name"
                 type="text"
                 error={!!errors.listName}
