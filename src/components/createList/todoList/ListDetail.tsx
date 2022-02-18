@@ -48,6 +48,8 @@ const ListDetail = () => {
       }
     };
     fetchTasks();
+    // not correct warning see more : https://github.com/facebook/react/issues/14920
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
