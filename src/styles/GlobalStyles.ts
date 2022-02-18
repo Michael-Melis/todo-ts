@@ -10,12 +10,9 @@ const GlobalStyle = createGlobalStyle`
 
 body{
    background: #E8E8E8;
-    font-family: monospace;
-    
+    font-family: monospace;    
 }
-
 `;
-
 export default GlobalStyle;
 
 export const StyledSubmitBtn = styled(Button)`
@@ -65,8 +62,5 @@ export const StyledTextField = styled(TextField)`
 export const StyledSelect = styled(Select)`
   & .MuiOutlinedInput-notchedOutline {
     border-color: #252525;
-  }
-  & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #049172;
   }
 `;

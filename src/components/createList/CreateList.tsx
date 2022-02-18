@@ -22,7 +22,7 @@ import {
 import { api } from "../../api/url";
 
 const schema = yup.object().shape({
-  listName: yup.string().required("Please fill the name of the list"),
+  listName: yup.string().required("Please name your list"),
 });
 
 const CreateList: FC = () => {
@@ -32,8 +32,10 @@ const CreateList: FC = () => {
     formState: { errors },
     reset,
   } = useForm<IList>({ resolver: yupResolver(schema) });
-  const navigate = useNavigate();
+
   const [listArray, setListArray] = useRecoilState(listArrayState);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fectchApi = async () => {
@@ -48,21 +50,19 @@ const CreateList: FC = () => {
   }, []);
 
   const onSubmit: SubmitHandler<IList> = async (data) => {
-    const postReq = async () => {
-      try {
-        const res = await axios.post<IList>(
-          api,
+    try {
+      const res = await axios.post<IList>(api, {
+        listName: data.listName,
+        listId: nanoid(),
+        tasks: [],
+      });
+      console.log(res.data);
+      setListArray([...listArray, res.data]);
+      navigate(`/${res.data.id}`);
+    } catch (error) {
+      console.log(error);
+    }
 
-          { listName: data.listName, listId: nanoid(), tasks: [] }
-        );
-        console.log(res.data);
-        setListArray([...listArray, res.data]);
-        navigate(`/${res.data.id}`);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    postReq();
     reset();
   };
   const handleDeleteTodoList = async (list: IList) => {

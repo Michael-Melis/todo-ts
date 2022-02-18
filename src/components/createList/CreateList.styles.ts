@@ -11,7 +11,6 @@ export const StyledListContainer = styled.div`
 export const StyledListForm = styled.div`
   display: flex;
   flex-direction: column;
-
   margin: 0 auto;
 `;
 export const StyledLists = styled.div`

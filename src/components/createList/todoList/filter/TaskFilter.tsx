@@ -20,7 +20,6 @@ const TaskFilter = ({ setSearchQuery, setFilter, filter }: Props) => {
 
   const searchArray = (e: ChangeEvent<HTMLInputElement>): void => {
     const input = e.target.value;
-
     setSearchQuery(input);
   };
 

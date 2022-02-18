@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { LocalizationProvider } from "@mui/lab";
-import DateAdapter from "@mui/lab/AdapterDayjs";
 import { taskArrayState } from "../../../atoms/atom";
 import { useRecoilState } from "recoil";
 import { IList, ITask } from "./../../../interfaces/Interfaces";
@@ -14,12 +12,11 @@ import TaskView from "./task/TaskView";
 import { StyledListDetailContainer } from "./ListDetail.styles";
 import TaskFilter from "./filter/TaskFilter";
 import { StyledSubmitBtn, StyledTextField } from "../../../styles/GlobalStyles";
-
 import { api } from "./../../../api/url";
 
 const taskSchema = yup.object().shape({
-  taskName: yup.string().required("Please fill the name of the task"),
-  deadline: yup.string().required("Please fill thedeadline"),
+  taskName: yup.string().required("Please fill the name of task"),
+  deadline: yup.string().required("Please set the deadline"),
   optionalInfo: yup.string(),
 });
 
@@ -34,9 +31,9 @@ const ListDetail = () => {
 
   const [tasks, setTasks] = useRecoilState(taskArrayState);
   const [listName, setListName] = useState<IList>();
+  const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Show All");
-  const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -75,7 +72,6 @@ const ListDetail = () => {
       optionalInfo: data.optionalInfo,
       id: nanoId,
       isCompleted: false,
-      isDeleted: false,
       listNameId: id,
     };
     setTasks([...tasks, newTask]);
