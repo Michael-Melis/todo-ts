@@ -152,16 +152,9 @@ const ListDetail = () => {
         </StyledListDetailContainer>
       </form>
 
-      {(filteredTasks.length === 0 ? tasks : filteredTasks).map(
-        (task: ITask) => (
-          <TaskView
-            key={task.id}
-            task={task}
-            tasks={tasks}
-            setTasks={setTasks}
-          />
-        )
-      )}
+      {filteredTasks.map((task: ITask) => (
+        <TaskView key={task.id} task={task} tasks={tasks} setTasks={setTasks} />
+      ))}
     </div>
   );
 };
