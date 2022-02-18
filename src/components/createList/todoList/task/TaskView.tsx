@@ -26,7 +26,7 @@ const TaskView = ({ task, tasks, setTasks }: Props) => {
   let { id } = useParams();
 
   const deadline = new Date(task.deadline);
-  const showDeadline = `${days[deadline.getDay()]} ${deadline.getDate()} ${
+  const showDeadline = `${days[deadline.getDay() - 1]} ${deadline.getDate()} ${
     monthNames[deadline.getMonth()]
   } ${deadline.getFullYear()} at ${deadline.getHours()}:${deadline.getMinutes()}`;
 

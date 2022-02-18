@@ -40,7 +40,7 @@ export const StyledLink = styled.div`
   }
   a:hover {
     color: #049172;
-    transform: scale(2);
+    transform: scale(1.2);
     text-shadow: 2px 6px 4px black;
   }
 `;
